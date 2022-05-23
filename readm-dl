@@ -23,7 +23,7 @@ cleanup() {
 
   echo "Program interupted...cleaning up..."
   for dir in "${TITLE}" readmtmp; do
-    echo rm -rf ${dir}
+    rm -rf ${dir}
   done
   echo "Cleanup finished. Please try again."
 }
