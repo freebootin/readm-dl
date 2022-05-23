@@ -36,6 +36,7 @@ main() {
   curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
 }
 
-#check_dependencies
-#main $@
-cleanup derp
+trap "cleanup ${3}" 1 2 3 6 15
+sleep 5
+check_dependencies
+main $@
