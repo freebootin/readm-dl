@@ -1,5 +1,15 @@
 #!/bin/bash
 
+check_dependencies() {
+  DEPENDENCIES=(curl feh)
+
+  for dep in "${DEPENDENCIES[@]}"; do
+    if [[ -z $(command -v ${dep}) ]]; then
+      echo "Missing dependency: ${dep}"
+      exit 1
+    fi
+  done
+}
 main() {
   local BASE_URL='https://www.readm.org/uploads/chapter_files'
   local BOOK_NUM="${1}"
@@ -8,4 +18,5 @@ main() {
   curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
 }
 
+check_dependencies
 main $@
