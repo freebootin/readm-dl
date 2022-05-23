@@ -1,7 +1,7 @@
 #!/bin/bash
 
 check_dependencies() {
-  DEPENDENCIES=(curl feh)
+  local DEPENDENCIES=(curl feh)
 
   for dep in "${DEPENDENCIES[@]}"; do
     if [[ -z $(command -v ${dep}) ]]; then
@@ -10,6 +10,7 @@ check_dependencies() {
     fi
   done
 }
+
 main() {
   local BASE_URL='https://www.readm.org/uploads/chapter_files'
   local BOOK_NUM="${1}"
