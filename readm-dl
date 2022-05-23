@@ -11,6 +11,23 @@ check_dependencies() {
   done
 }
 
+setup() {
+  local TITLE="${1}"
+
+  mkdir readmtmp
+  mkdir "${TITLE}"
+}
+
+cleanup() {
+  local TITLE="${1}"
+
+  echo "Program interupted...cleaning up..."
+  for dir in "${TITLE}" readmtmp; do
+    echo rm -rf ${dir}
+  done
+  echo "Cleanup finished. Please try again."
+}
+
 main() {
   local BASE_URL='https://www.readm.org/uploads/chapter_files'
   local BOOK_NUM="${1}"
@@ -19,5 +36,6 @@ main() {
   curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
 }
 
-check_dependencies
-main $@
+#check_dependencies
+#main $@
+cleanup derp
