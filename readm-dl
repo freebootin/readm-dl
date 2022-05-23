@@ -28,6 +28,15 @@ cleanup() {
   echo "Cleanup finished. Please try again."
 }
 
+num_to_title() {
+  #URL="https://www.readm.org/manga/${1}"
+  #curl -s "${URL}" > temp
+  TITLE=$(grep '<title>' derp)
+  TITLE="${TITLE##    <title>}" # trim leading whitespace and tag
+  TITLE="${TITLE%%</title>}"    # trim trailing tag
+  echo "${TITLE// /-}"
+}
+
 main() {
   local BASE_URL='https://www.readm.org/uploads/chapter_files'
   local BOOK_NUM="${1}"
@@ -37,6 +46,6 @@ main() {
 }
 
 trap "cleanup ${3}" 1 2 3 6 15
-sleep 5
+
 check_dependencies
 main $@
