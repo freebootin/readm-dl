@@ -1,0 +1,11 @@
+#!/bin/bash
+
+main() {
+  local BASE_URL='https://www.readm.org/uploads/chapter_files'
+  local BOOK_NUM="${1}"
+  local CHAPTER_NUM="${2}"
+
+  curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
+}
+
+main $@
