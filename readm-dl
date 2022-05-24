@@ -66,6 +66,7 @@ download_book() {
   fi
 
   # test if 1-1 can be dled
+  echo "Downloading Chapter: 1, Page: 1"
   curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > ${BOOK_NAME}/${CHAPTER_NUM}-${PAGE_NUM}.jpg
 
   if ! is_image ${BOOK_NAME}/1-1.jpg; then
