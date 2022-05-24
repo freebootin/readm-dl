@@ -19,6 +19,7 @@ cleanup() {
     rm -rf ${dir}
   done
   echo "Cleanup finished. Please try again."
+  exit 0
 }
 
 tear_down() {
@@ -39,6 +40,7 @@ num_to_title() {
 setup() {
   local TITLE="${1}"
 
+  echo "RUNNING SETUP"
   mkdir readmtmp
   mkdir "${TITLE}"
 }
@@ -54,10 +56,12 @@ is_image() {
   return 0
 }
 
-download() {
+download_book() {
   local BASE_URL='https://www.readm.org/uploads/chapter_files'
   local CHAPTER_NUM=1
   local PAGE_NUM=1
+  local MAX_CHAPTER=100
+  local MAX_PAGE=100
 
   local BOOK_NUM="${1}"
 
@@ -68,7 +72,7 @@ download() {
   # test if 1-1 can be dled
   curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
 
-  if ! is_image readmtmp/1-1.jpg;
+  if ! is_image readmtmp/1-1.jpg; then
     echo "Could not download first page. Does manga exist?"
     return 0
   fi
@@ -76,25 +80,27 @@ download() {
   PAGE_NUM=$((PAGE_NUM+1))
 
     # chapter loop
-  while true; do
+    while [[ ${CHAPTER_NUM} -lt ${MAX_CHAPTER} ]]; do
 
-    # page loop
-    while true; do
-      # loop through pages
-      curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
-      if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg; then
+      # page loop
+      while [[ ${PAGE_NUM} -lt ${MAX_PAGE} ]]; do
+        # loop through pages
+        echo "Downloading Chapter: ${CHAPTER_NUM}, Page: ${PAGE_NUM}"
+        curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
+        if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg; then
 
-        # If page 1 does not exist book is done, exit download loop.
-        if [[ ${PAGE_NUM} -eq 1 ]]; then
-          break 2
+          # If page 1 does not exist book is done, exit download loop.
+          if [[ ${PAGE_NUM} -eq 1 ]]; then
+            break 2
+          fi
+          
+          # When a page doesn't exist it is the end of the chapter.
+          break
         fi
-        
-        # When a page doesn't exist it is the end of the chapter.
-        break
-      fi
 
-      PAGE_NUM=$((PAGE_NUM+1))
-    done
+        PAGE_NUM=$((PAGE_NUM+1))
+
+      done
 
     PAGE_NUM=1
     CHAPTER_NUM=$((CHAPTER_NUM+1))
@@ -110,10 +116,11 @@ main() {
   # might not need setup
   setup $(num_to_title ${BOOK_NUM})
 
-  curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
+  download_book "${BOOK_NUM}"
+#  curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
 }
 
-trap "cleanup ${3}" 1 2 3 6 15
 
+trap "cleanup ${3}" 1 2 3 6 15
 check_dependencies
 main $@
