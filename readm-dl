@@ -65,50 +65,39 @@ download() {
     echo "Download directory does not exist, run setup()."
   fi
 
-  while true; do
-#     curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
-# 
-#     if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg;
-#       return 0
-#     fi
-    # Have to download all pages, incrementing PAGE_NUM each download.
-    # When is_image returns 1, increment CHAPTER_NUM, reset PAGE_NUM to 1, start download again.
-    # If is_image returns 1 AND PAGE_NUM = 1 then book is done.
+  # test if 1-1 can be dled
+  curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
 
-    # test if 1-1 can be dled
-    curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
-
-    if ! is_image readmtmp/1-1.jpg;
-      echo "Could not download first page. Does manga exist?"
-      return 0
-    fi
-   
-    PAGE_NUM=$((PAGE_NUM+1))
+  if ! is_image readmtmp/1-1.jpg;
+    echo "Could not download first page. Does manga exist?"
+    return 0
+  fi
+ 
+  PAGE_NUM=$((PAGE_NUM+1))
 
     # chapter loop
+  while true; do
+
+    # page loop
     while true; do
+      # loop through pages
+      curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
+      if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg; then
 
-      # page loop
-      while true; do
-        # loop through pages
-        curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
-        if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg; then
-
-          # If page 1 does not exist book is done, exit download loop.
-          if [[ ${PAGE_NUM} -eq 1 ]]; then
-            break 2
-          fi
-          
-          # When a page doesn't exist it is the end of the chapter.
-          break
+        # If page 1 does not exist book is done, exit download loop.
+        if [[ ${PAGE_NUM} -eq 1 ]]; then
+          break 2
         fi
+        
+        # When a page doesn't exist it is the end of the chapter.
+        break
+      fi
 
-        PAGE_NUM=$((PAGE_NUM+1))
-      done
-
-      PAGE_NUM=1
-      CHAPTER_NUM=$((CHAPTER_NUM+1))
+      PAGE_NUM=$((PAGE_NUM+1))
     done
+
+    PAGE_NUM=1
+    CHAPTER_NUM=$((CHAPTER_NUM+1))
   done
   # assume all images are .jpg for now
 
