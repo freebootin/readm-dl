@@ -22,11 +22,6 @@ cleanup() {
   exit 0
 }
 
-tear_down() {
-  echo "Cleaning up..."
-  rm -rf readmtmp
-}
-
 num_to_title() {
   local URL="https://www.readm.org/manga/${1}"
   curl -s "${URL}" > title-temp
