@@ -50,7 +50,8 @@ is_image() {
   # of an image. This means you can grep the image file for "HTML" and if a
   # non empty string is returned then you have the 404 HTML file.
 
-  if [[ -n $(grep "HTML" ${1}) ]]; then
+  echo "CALLING is_image()"
+  if [[ -n $(grep -i "HTML" ${1}) ]]; then
     return 1
   fi
   return 0
@@ -70,7 +71,7 @@ download_book() {
   fi
 
   # test if 1-1 can be dled
-  curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
+  curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
 
   if ! is_image readmtmp/1-1.jpg; then
     echo "Could not download first page. Does manga exist?"
@@ -86,7 +87,7 @@ download_book() {
       while [[ ${PAGE_NUM} -lt ${MAX_PAGE} ]]; do
         # loop through pages
         echo "Downloading Chapter: ${CHAPTER_NUM}, Page: ${PAGE_NUM}"
-        curl -s "${BASE_URL}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
+        curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/${PAGE_NUM}.jpg" > readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg
         if ! is_image readmtmp/${CHAPTER_NUM}-${PAGE_NUM}.jpg; then
 
           # If page 1 does not exist book is done, exit download loop.
@@ -121,6 +122,6 @@ main() {
 }
 
 
-trap "cleanup ${3}" 1 2 3 6 15
+#trap "cleanup ${3}" 1 2 3 6 15
 check_dependencies
 main $@
