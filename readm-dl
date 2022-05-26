@@ -11,17 +11,6 @@ check_dependencies() {
   done
 }
 
-cleanup() {
-  local TITLE="${1}"
-
-  echo "Program interupted...cleaning up..."
-  for dir in "${TITLE}"; do
-    rm -rf ${dir}
-  done
-  echo "Cleanup finished. Please try again."
-  exit 0
-}
-
 num_to_title() {
   local URL="https://www.readm.org/manga/${1}"
   curl -s "${URL}" > title-temp
@@ -119,7 +108,5 @@ main() {
 #  curl -s "${BASE_URL}/${BOOK_NUM}/${CHAPTER_NUM}/1.jpg" > test.jpg
 }
 
-
-#trap "cleanup ${3}" 1 2 3 6 15
 check_dependencies
 main $@
