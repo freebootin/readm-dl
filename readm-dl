@@ -1,7 +1,7 @@
 #!/bin/bash
 
 check_dependencies() {
-  local DEPENDENCIES=(curl feh)
+  local DEPENDENCIES=(curl)
 
   for dep in "${DEPENDENCIES[@]}"; do
     if [[ -z $(command -v ${dep}) ]]; then
@@ -92,6 +92,8 @@ download_book() {
           fi
           
           # When a page doesn't exist it is the end of the chapter.
+          # Delete last file downloaded, as it is HTML.
+          rm ${BOOK_NAME}/${CHAPTER_NUM}-${PAGE_NUM}.jpg
           break
         fi
 
